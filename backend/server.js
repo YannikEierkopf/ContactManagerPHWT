@@ -2,6 +2,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 //Initialize server
 const app = express();
@@ -28,7 +29,7 @@ app.post('/create/contact', async (req, res) => {
     const data = req.body;
 
     const insertQuery = `
-        INSERT INTO contact (
+        INSERT INTO contacts (
             first_name,
             last_name,
             email,
@@ -73,3 +74,35 @@ app.post('/create/contact', async (req, res) => {
 app.listen(port, () => {
     console.log('Server runs: http://localhost:3000');
 });
+
+function hashPassword(password) {
+    const hash = bcrypt.hash(password, 10);
+    return hash;
+}
+
+function getPassword(userID) {
+    const query = `
+        SELECT password_hash
+        FROM users
+        WHERE id = $1`;
+    const { rows } = pool.query(query, [userID]);
+    return rows;
+}
+
+function setPassword(password) {
+    
+}
+
+app.post('/get/contact/', async (req, res) => {
+
+});
+
+function getContacts(userID) {
+    const query = `
+        SELECT c.*
+        FROM user_contacts uc
+        JOIN contacts c ON c.id = uc.contact_id
+        WHERE uc.user_id = %1`;
+    const { rows } = pool.query(query, [userID]);
+    return rows;
+}
