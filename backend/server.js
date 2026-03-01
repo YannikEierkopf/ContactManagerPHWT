@@ -28,7 +28,7 @@ app.post('/create/contact', async (req, res) => {
     const data = req.body;
 
     const insertQuery = `
-        INSERT INTO contact (
+        INSERT INTO contacts (
             first_name,
             last_name,
             email,
