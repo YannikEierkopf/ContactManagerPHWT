@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="dashboard.js" defer></script> <!--defer, Ausführung erst wenn HTML geparst wurde -->
+</head>
+<body>
+    <header>
+        <h1>Kontak-Verwaltung</h1>
+        <button type="button"> Abmelden</button>
+    </header>
+
+
+    <main>
+
+        <section id="user">
+            <h2> Benutzer Bereich</h2>
+            <div id="userNavigation">
+                <a href="../newContact.html">Neuen Kontakt anlegen</a>
+                
+                <label for="contactSearch">Kontakt suchen (nach Benutzername)</label>
+                <input type="text" id="contactSearch" name="contactSearch" maxlength="128">
+                
+                <label for="contactFilter">Kontakte filtern</label>
+                <select id="contactFilter" name="contactFilter">
+                    <option value="all">Alle</option>
+                    <option value="company">Firma</option>
+                    <option value="place">Ort</option>
+                </select>
+            </div>
+
+            <div id="allContacts">
+                <h3>Alle Kontakte</h3>
+                <ul id="contactList">
+                    <!--Kontakte werden per Javascript angezeigt-->
+                </ul>
+            </div>
+        </section>
+
+        <section id="admin">
+            <h2>Admin Bereich</h2>
+            <div id="adminSite">
+
+            <form id="createUserForm">
+                <fieldset>
+                    <legend> Neuen Benutzer anlegen</legend>
+
+                    <label for="username">Benutzername</label>
+                    <input type="text" id="username" name="username" maxlength="128" required>
+
+                    <label for="password">Passwort</label>
+                    <input type="password" id="password" name="password" maxlength="128" required>
+
+                    <label for="role">Rolle</label>
+                    <select id="role" name="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="reset">Zurücksetzen</button>
+                    <button type="submit">Benutzer erstellen</button>
+                </fieldset>
+            </form>
+            </div>
+        </section>
+
+
+    </main>
+
+
+    <footer>
+        <nav>
+            <a href="#">Impressum</a>
+            <a href="#">Kontakt</a>
+            <a href="#">Datenschutz</a>
+        </nav>
+    </footer>
+
+<!--Codebase englisch, Für Anwender sichtbarkeit auf deutsch Symbole, nur UTF-8, kein chinesichen Symbole, Max eingabe zeichen, keine Skripte-->
+</body>
+</html>
