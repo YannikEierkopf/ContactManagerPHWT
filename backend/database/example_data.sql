@@ -1,10 +1,10 @@
 -- Insert example users
-INSERT INTO users (username, password_hash, role) VALUES
-('alice_admin', 'hash_alice', 'admin'),
-('bob_boss', 'hash_bob', 'admin'),
-('charlie_user', 'hash_charlie', 'user'),
-('diana_user', 'hash_diana', 'user'),
-('eve_user', 'hash_eve', 'user');
+INSERT INTO user (name, password_hash, role) VALUES
+('Alice Admin', 'hash_alice', 'admin'),
+('Bob Boss', 'hash_bob', 'admin'),
+('Charlie User', 'hash_charlie', 'user'),
+('Diana User', 'hash_diana', 'user'),
+('Eve User', 'hash_eve', 'user');
 
 INSERT INTO contacts (first_name, last_name, email, telephone_number, custom_fields) VALUES
 ('Max', 'Mustermann', 'max@example.com', '+49111111111', '{"company": "ACME"}'),

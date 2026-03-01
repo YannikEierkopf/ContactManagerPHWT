@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New contact</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Neuer Kontakt</h1>
+    </header>
+
+    <main>
+        <form action="/create/contact" method="POST">
+
+            <fieldset>
+                <legend>Standard Informationen</legend>
+
+                <div class="field">
+                    <label for="firstName">Vorname</label><br>
+                    <input type="text" name="firstName" id="firstName" placeholder="Gebe den Vorname ein">
+                </div>
+
+                <div class="field">
+                    <label for="lastName">Nachname</label><br>
+                    <input type="text" name="lastName" id="lastName" placeholder="Gebe den Nachname ein">
+                </div>
+
+                <div class="field">
+                    <label for="email">Email</label><br>
+                    <input type="email" name="email" id="email" placeholder="Gebe die Email ein">
+                </div>
+
+                <div class="field">
+                    <label for="telephoneNumber">Telefonnummer</label><br>
+                    <input type="tel" name="telephoneNumber" id="telephoneNumber" placeholder="Gebe den Telefonnummer ein">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Eigene Informationen</legend>
+
+                <div id = "customFields"></div>
+
+                <button type="button" onclick="addField()">Neues Feld erstellen</button>
+
+                <script>
+                    function addField() {
+                        const container = document.getElementById('customFields');
+                        const field = document.createElement('div');
+                        const i = Date.now();
+
+                        field.id = `${i}`;
+                        field.style.marginBottom = '10px';
+                        field.innerHTML = `
+                        <input type = "text" id = "label_${i}" name = "label_${i}" placeholder = "Fieldname"><br>
+                        <input type="text" id = "input_${i}" name="input_${i}" placeholder="Value"><br>
+                        <button type = "button" onclick = "removeField(${i})">Delete Field</button>`
+
+                        container.appendChild(field);
+                    }
+
+                    function removeField(id) {
+                        const field = document.getElementById(id);
+                        field.remove();
+
+                    }
+                </script>
+
+
+            </fieldset>
+
+            <br>
+
+            <button type="submit">Save contact</button>
+
+        </form>
+    </main>
+
+</body>
+</html>
