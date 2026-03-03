@@ -9,7 +9,7 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'new_contact.html'));
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'login', 'login.html'));
 });
 
 // Server is able to read data from HTML-Form
