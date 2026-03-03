@@ -1,5 +1,5 @@
 -- Insert example users
-INSERT INTO user (name, password_hash, role) VALUES
+INSERT INTO users (name, password_hash, role) VALUES
 ('Alice Admin', 'hash_alice', 'admin'),
 ('Bob Boss', 'hash_bob', 'admin'),
 ('Charlie User', 'hash_charlie', 'user'),
