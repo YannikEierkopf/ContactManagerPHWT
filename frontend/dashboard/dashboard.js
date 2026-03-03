@@ -1,11 +1,11 @@
-
 //Authetifizierung User oder Admin
+let user = null;  // const weggelassen, damit es auch auf einer höheren Ebene verfügbar ist
 const storedUser = sessionStorage.getItem("user");
 
 if (storedUser) {
-  const user = JSON.parse(storedUser);
+  user = JSON.parse(storedUser);
   document.getElementById(user.role).style.display = "block";
-
+}
 //Logout Button (für Benutzer und Admin)
 const logoutButton = document.querySelector("header button");
 
@@ -60,6 +60,8 @@ if (user.role === "admin") {
       });
 
       const data = await response.json();
+      console.log(response.status);
+      console.log(data);
 
       if (!response.ok) {
         alert(data.error || "Benutzer konnte nicht erstellt werden.");

@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 // Initialize server
 const app = express();
 const port = 3000;
-
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'login', 'login.html'));
 });
@@ -21,9 +21,13 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'contact_manager_db',
-    password: 'postgres',
+    password: 'hallo',
     port: 5432,
 });
+pool.connect()
+    .then(() => console.log('Connected to PostgreSQL database'))
+    .catch(err => console.error('Database connection error:', err));
+
 
 // POST new contact
 app.post('/create/contact', async (req, res) => {
