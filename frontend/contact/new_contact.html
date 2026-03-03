@@ -55,9 +55,9 @@
                         field.id = `${i}`;
                         field.style.marginBottom = '10px';
                         field.innerHTML = `
-                        <input type = "text" id = "label_${i}" name = "label_${i}" placeholder = "Fieldname"><br>
-                        <input type="text" id = "input_${i}" name="input_${i}" placeholder="Value"><br>
-                        <button type = "button" onclick = "removeField(${i})">Delete Field</button>`
+                        <input type = "text" id = "label_${i}" name = "label_${i}" placeholder = "Bezeichnung"><br>
+                        <input type="text" id = "input_${i}" name="input_${i}" placeholder="Wert"><br>
+                        <button type = "button" onclick = "removeField(${i})">Feld löschen</button>`
 
                         container.appendChild(field);
                     }
@@ -72,9 +72,7 @@
 
             </fieldset>
 
-            <br>
-
-            <button type="submit">Save contact</button>
+            <button type="submit">Kontakt erstellen</button>
 
         </form>
     </main>

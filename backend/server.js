@@ -70,6 +70,52 @@ app.post('/create/contact', async (req, res) => {
     }
 });
 
+//POST edit contact
+
+app.post('/update/contact', async (req, res) => {
+    const data = req.body;
+    const id = req.params.id;
+
+    const editQuery = `
+        UPDATE contacts 
+        SET first_name = $1, 
+            last_name = $2, 
+            email = $3, 
+            telephone_number = $4, 
+            custom_fields = $5
+        WHERE id = $6`;
+
+    const customFields = {};
+
+    for (const key in data) {
+        if (key.startsWith('label_')) {
+            const id = key.split('_')[1];
+            const fieldName = data[key];
+            const fieldValue = data[`input_${id}`];
+            customFields[fieldName] = fieldValue;
+        }
+    }
+
+    const values = [
+        data['firstName'],
+        data['lastName'],
+        data['email'],
+        data['telephoneNumber'],
+        customFields,
+        id
+    ];
+
+    try {
+        await pool.query(editQuery, values);
+        console.log(`Contact was edited.`);
+        res.send('Contact was edited!');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+
+})
+
 //Start server
 app.listen(port, () => {
     console.log('Server runs: http://localhost:3000');
