@@ -38,14 +38,39 @@ if (user.role === "admin") {
 
   const form = document.getElementById("createUserForm");
 
-  form.addEventListener("submit", function(event) {
+  form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const role = document.getElementById("role").value;
 
-    console.log(username, password, role);
+    try {
+      const response = await fetch("http://localhost:3000/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          role: role
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Benutzer konnte nicht erstellt werden.");
+        return;
+      }
+
+      alert("Benutzer wurde erstellt.");
+      form.reset();
+    } catch (error) {
+      console.error("Fehler:", error);
+      alert("Server nicht erreichbar.");
+    }
   });
 }
 

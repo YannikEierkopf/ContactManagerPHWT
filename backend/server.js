@@ -110,9 +110,35 @@ async function getContacts(userID) {
 }
 
 // API routes ---------------------------------------------------------------
+// (TODO TESTEN)
+// admin creates a new user with explicit role
+app.post('/api/users', async (req, res) => {
+    const { username, password, role } = req.body;
+
+    if (!username || !password || !role) {
+        return res.status(400).json({ error: 'username, password and role are required' });
+    }
+
+    if (!['admin', 'user'].includes(role)) {
+        return res.status(400).json({ error: 'role must be admin or user' });
+    }
+
+    try {
+        const hashed = await hashPassword(password);
+        const insert = `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)`;
+        await pool.query(insert, [username, hashed, role]);
+        return res.status(201).json({ message: 'user created' });
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(409).json({ error: 'username already exists' });
+        }
+        console.error(err);
+        return res.status(500).json({ error: 'error creating user' });
+    }
+});
 
 // register a new user (expects username & password in body)
-app.post('/register', async (req, res) => {
+/* (TODO TESTEN ODER LÖSCHEN) app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send('username and password required');
@@ -128,7 +154,7 @@ app.post('/register', async (req, res) => {
         res.status(500).send('error registering user');
     }
 });
-
+*/
 // login: verify credentials and return user id if ok
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
