@@ -11,7 +11,8 @@ const logoutButton = document.querySelector("header button");
 
 logoutButton.addEventListener("click", function(){
     sessionStorage.removeItem("user");
-    window.location.href = "../login/login.html"
+    //window.location.href = "../login/login.html"
+    window.location.href="loginzumtest.html";
 });
 
 //User Funktionalität
@@ -97,11 +98,19 @@ fetch("http://localhost:3000/api/users", {
 .catch(error => {
   console.error("Fehler:", error);
 });
+  });
+}
 
-*/
+
+
+
+
+
+
 
 } else {
-    window.location.href="../login/login.html";
+    //window.location.href="../login/login.html";
+    window.location.href="loginzumtest.html";
 }
 
 /*
