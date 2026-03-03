@@ -1,10 +1,10 @@
-//Load packages
+// Load packages
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
-//Initialize server
+// Initialize server
 const app = express();
 const port = 3000;
 
@@ -12,8 +12,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'new_contact.html'));
 });
 
-//Server is able to read data from HTML-Form
+// Server is able to read data from HTML-Form
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // allow JSON bodies for API endpoints
 
 // PostgreSQL configuration
 const pool = new Pool({
@@ -24,7 +25,7 @@ const pool = new Pool({
     port: 5432,
 });
 
-//POST new contact
+// POST new contact
 app.post('/create/contact', async (req, res) => {
     const data = req.body;
 
@@ -73,4 +74,114 @@ app.post('/create/contact', async (req, res) => {
 //Start server
 app.listen(port, () => {
     console.log('Server runs: http://localhost:3000');
+});
+
+
+// helper routines -----------------------------------------------------------
+async function hashPassword(password) {
+    // return a promise that resolves to the bcrypt hash
+    const hash = await bcrypt.hash(password, 10);
+    return hash;
+}
+
+async function getPassword(userID) {
+    const query = `
+        SELECT password_hash
+        FROM users
+        WHERE id = $1`;
+    const { rows } = await pool.query(query, [userID]);
+    return rows;
+}
+
+async function setPassword(userID, password) {
+    const hash = await hashPassword(password);
+    const query = `UPDATE users SET password_hash = $1 WHERE id = $2`;
+    await pool.query(query, [hash, userID]);
+}
+
+async function getContacts(userID) {
+    const query = `
+        SELECT c.*
+        FROM user_contacts uc
+        JOIN contacts c ON c.id = uc.contact_id
+        WHERE uc.user_id = $1`;
+    const { rows } = await pool.query(query, [userID]);
+    return rows;
+}
+
+// API routes ---------------------------------------------------------------
+
+// register a new user (expects username & password in body)
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).send('username and password required');
+    }
+
+    try {
+        const hashed = await hashPassword(password);
+        const insert = `INSERT INTO users (username, password_hash) VALUES ($1, $2)`;
+        await pool.query(insert, [username, hashed]);
+        res.send('user created');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('error registering user');
+    }
+});
+
+// login: verify credentials and return user id if ok
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).send('username and password required');
+    }
+
+    try {
+        const select = `SELECT id, password_hash FROM users WHERE username = $1`;
+        const { rows } = await pool.query(select, [username]);
+        if (rows.length === 0) {
+            return res.status(401).send('invalid credentials');
+        }
+        const user = rows[0];
+        const match = await bcrypt.compare(password, user.password_hash);
+        if (!match) {
+            return res.status(401).send('invalid credentials');
+        }
+        res.json({ userID: user.id });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('login error');
+    }
+});
+
+// update a user's password
+app.post('/set/password', async (req, res) => {
+    const { userID, newPassword } = req.body;
+    if (!userID || !newPassword) {
+        return res.status(400).send('user-ID and new Password required');
+    }
+
+    try {
+        await setPassword(userID, newPassword);
+        res.send('password updated');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('error updating password');
+    }
+});
+
+// fetch contacts for a user
+app.post('/get/contact/', async (req, res) => {
+    const { userID } = req.body;
+    if (!userID) {
+        return res.status(400).send('user-ID required');
+    }
+
+    try {
+        const contacts = await getContacts(userID);
+        res.json(contacts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('error retrieving contacts');
+    }
 });
