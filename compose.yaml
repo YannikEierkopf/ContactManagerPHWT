@@ -7,5 +7,5 @@ services:
       - POSTGRES_PASSWORD=hallo
       - POSTGRES_DB=contact_manager_db
     ports:
-      - "5332:5432"
+      - "5432:5432"
     restart: unless-stopped
