@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +8,27 @@
     <script src="login.js" defer></script>
 </head>
 <body>
-    <div class="login-container">
+    <main class="login-container">
         <h1>Contact Manager</h1>
         <form id="loginForm">
-            <div class="form-group">
+            <section class="form-group">
                 <label for="Benutzername">Benutzername</label>
                 <input type="text" id="Benutzername" name="Benutzername" placeholder="Gib deinen Benutzernamen ein" required>
-            </div>
+            </section>
 
-            <div class="form-group">
+            <section class="form-group">
                 <label for="password">Passwort</label>
                 <input type="password" id="password" name="password" placeholder="Gib dein Passwort ein" required>
                 <div class="error-message" id="passwordError"></div>
-            </div>
+            </section>
 
-            <div class="remember-me">
+            <section class="remember-me">
                 <input type="checkbox" id="remember" name="remember">
                 <label for="remember">Login merken</label>
-            </div>
+            </section>
 
             <button type="submit" class="btn-login">Login</button>
         </form>
-    </div>
+    </main>
 </body>
 </html>
