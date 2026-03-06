@@ -247,7 +247,10 @@ app.post('/create/contact', async (req, res) => {
 
 app.post('/edit/contact', async (req, res) => {
     const data = req.body;
-    const id = req.body.id;
+    //const id = req.params.id;
+    const id = parseInt(data.id, 10); // von hidden input im Formular
+    if (!id) return res.status(400).send('contact ID fehlt');
+
 
     const editQuery = `
         UPDATE contacts 

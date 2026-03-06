@@ -39,23 +39,20 @@ if (user &&user.role === "user") {
       contactList.innerHTML = ""; // vorherige Liste leeren
 
       contacts.forEach(contact => {
-        const li = document.createElement("li");
-        const contactInfo = document.createTextNode(
-          contact.first_name + " " +
-          contact.last_name + " | " +
-          (contact.email || "keine Email") + " | " +
-          (contact.telephone_number || "keine Telefonnummer") + " | ");
+  const li = document.createElement("li");
 
-        //Button to edit selected contact
-        const editButton = document.createElement("a");
-        editButton.href = `../contact/edit_contact.html?id=${contact.id}`;
-        editButton.textContent = "Bearbeiten";
+  // Link erstellen mit Query Parameter ?id=contactID
+  const link = document.createElement("a");
+  link.href = `../contact/edit_contact.html?id=${contact.id}`;
+  link.textContent =
+    contact.first_name + " " +
+    contact.last_name + " | " +
+    (contact.email || "keine Email") + " | " +
+    (contact.telephone_number || "keine Telefonnummer");
 
-        li.appendChild(contactInfo);
-        li.appendChild(editButton);
-
-        contactList.appendChild(li);
-      });
+  li.appendChild(link);
+  contactList.appendChild(li);
+});
 
     } catch (error) {
       console.error("Fehler beim Laden der Kontakte:", error);

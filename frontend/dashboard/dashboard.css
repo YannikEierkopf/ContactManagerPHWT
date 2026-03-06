@@ -145,3 +145,20 @@
         #userNavigation a:hover {
             text-decoration: underline;
         }
+
+
+
+        /* Kontakte als Links */
+        #contactList li {
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;          /* zeigt, dass es klickbar ist */
+            transition: background-color 0.2s ease; /* sanfter Übergang */
+        }
+
+        /* Hover-Effekt zur besseren Sichtbarkeit*/
+        #contactList li:hover {
+            background-color: #007BFF; /* helle Hintergrundfarbe beim Überfahren */
+        }
