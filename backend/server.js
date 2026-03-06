@@ -21,7 +21,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'contact_manager_db',
-    password: 'hallo',      //Sollte noch geändert werden, eine Anforderung sagt, keine Passwörter im Repository zu speichern.
+    password: 'postgres',      //Sollte noch geändert werden, eine Anforderung sagt, keine Passwörter im Repository zu speichern.
     port: 5432,
 });
 
@@ -247,7 +247,7 @@ app.post('/create/contact', async (req, res) => {
 
 app.post('/edit/contact', async (req, res) => {
     const data = req.body;
-    const id = req.params.id;
+    const id = req.body.id;
 
     const editQuery = `
         UPDATE contacts 
@@ -281,7 +281,7 @@ app.post('/edit/contact', async (req, res) => {
     try {
         await pool.query(editQuery, values);
         console.log(`Contact was edited.`);
-        res.redirect('/dashboard.html');
+        res.redirect('../dashboard/dashboard.html');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Error');

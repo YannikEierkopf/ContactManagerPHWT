@@ -40,11 +40,20 @@ if (user &&user.role === "user") {
 
       contacts.forEach(contact => {
         const li = document.createElement("li");
-        li.textContent =
+        const contactInfo = document.createTextNode(
           contact.first_name + " " +
           contact.last_name + " | " +
           (contact.email || "keine Email") + " | " +
-          (contact.telephone_number || "keine Telefonnummer");
+          (contact.telephone_number || "keine Telefonnummer") + " | ");
+
+        //Button to edit selected contact
+        const editButton = document.createElement("a");
+        editButton.href = `../contact/edit_contact.html?id=${contact.id}`;
+        editButton.textContent = "Bearbeiten";
+
+        li.appendChild(contactInfo);
+        li.appendChild(editButton);
+
         contactList.appendChild(li);
       });
 
