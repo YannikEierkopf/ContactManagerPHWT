@@ -21,7 +21,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'contact_manager_db',
-    password: 'postgres',
+    password: 'hallo',      //Sollte noch geändert werden, eine Anforderung sagt, keine Passwörter im Repository zu speichern.
     port: 5432,
 });
 

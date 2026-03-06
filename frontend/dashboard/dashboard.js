@@ -6,15 +6,16 @@ if (storedUser) {
   user = JSON.parse(storedUser);
   document.getElementById(user.role).style.display = "block";
 }
+/*
 //Logout Button (für Benutzer und Admin)
 const logoutButton = document.querySelector("header button");
 
 logoutButton.addEventListener("click", function(){
     sessionStorage.removeItem("user");
     //window.location.href = "../login/login.html"
-    window.location.href="loginzumtest.html";
+    window.location.href="../login/login.html";
 });
-
+*/
 //User Funktionalität
 if (user.role === "user") {
 
