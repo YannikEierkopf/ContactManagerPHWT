@@ -210,7 +210,7 @@ app.post('/create/contact', async (req, res) => {
     try {
         await pool.query(insertQuery, values);
         console.log(`New contact was created.`);
-        res.send('New contact was created!');
+        res.redirect('/dashboard.html');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Error');
@@ -255,7 +255,7 @@ app.post('/edit/contact', async (req, res) => {
     try {
         await pool.query(editQuery, values);
         console.log(`Contact was edited.`);
-        res.send('Contact was edited!');
+        res.redirect('/dashboard.html');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Error');
