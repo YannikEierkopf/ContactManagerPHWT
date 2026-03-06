@@ -78,6 +78,21 @@
                     }
                 };
 
+                function loadCustomField(labelName, inputValue) {
+                    const container = document.getElementById('customFields');
+                    const field = document.createElement('div');
+                    const i = Date.now();
+
+                    field.id = `field_${i}`;
+                    field.style.marginBottom = '10px';
+                    field.innerHTML = `
+                        <input type="text" id="label_${i}" name="label_${i}" value="${labelName}" placeholder="Bezeichnung"><br>
+                        <input type="text" id="input_${i}" name="input_${i}" value="${inputValue}" placeholder="Wert"><br>
+                        <button type="button" onclick="removeField('field_${i}')">Feld löschen</button>`;
+
+                    container.appendChild(field);
+                }
+
                 function addField() {
                     const container = document.getElementById('customFields');
                     const field = document.createElement('div');
