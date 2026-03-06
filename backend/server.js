@@ -21,105 +21,13 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'contact_manager_db',
-    password: 'hallo',
+    password: 'postgres',
     port: 5432,
 });
+
 pool.connect()
     .then(() => console.log('Connected to PostgreSQL database'))
     .catch(err => console.error('Database connection error:', err));
-
-
-// POST new contact
-app.post('/create/contact', async (req, res) => {
-    const data = req.body;
-
-    const insertQuery = `
-        INSERT INTO contacts (
-            first_name,
-            last_name,
-            email,
-            telephone_number,
-            custom_fields
-        )
-        VALUES ($1, $2, $3, $4, $5)`;
-
-
-    const customFields = {};
-    //Custom fields in JSON umwandeln
-    for (const key in data) {
-        if (key.startsWith('label_')) {
-            const id = key.split('_')[1];
-            const fieldName = data[key];
-            const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
-
-        }
-    }
-
-    const values = [
-        data['firstName'],
-        data['lastName'],
-        data['email'],
-        data['telephoneNumber'],
-        customFields
-    ];
-
-    //Insert data into db
-    try {
-        await pool.query(insertQuery, values);
-        console.log(`New contact was created.`);
-        res.send('New contact was created!');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-//POST edit contact
-
-app.post('/update/contact', async (req, res) => {
-    const data = req.body;
-    const id = req.params.id;
-
-    const editQuery = `
-        UPDATE contacts 
-        SET first_name = $1, 
-            last_name = $2, 
-            email = $3, 
-            telephone_number = $4, 
-            custom_fields = $5
-        WHERE id = $6`;
-
-    const customFields = {};
-
-    for (const key in data) {
-        if (key.startsWith('label_')) {
-            const id = key.split('_')[1];
-            const fieldName = data[key];
-            const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
-        }
-    }
-
-    const values = [
-        data['firstName'],
-        data['lastName'],
-        data['email'],
-        data['telephoneNumber'],
-        customFields,
-        id
-    ];
-
-    try {
-        await pool.query(editQuery, values);
-        console.log(`Contact was edited.`);
-        res.send('Contact was edited!');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-
-})
 
 //Start server
 app.listen(port, () => {
@@ -259,5 +167,116 @@ app.post('/get/contact/', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('error retrieving contacts');
+    }
+});
+
+// Contact
+// POST new contact
+app.post('/create/contact', async (req, res) => {
+    const data = req.body;
+
+    const insertQuery = `
+        INSERT INTO contacts (
+            first_name,
+            last_name,
+            email,
+            telephone_number,
+            custom_fields
+        )
+        VALUES ($1, $2, $3, $4, $5)`;
+
+
+    const customFields = {};
+    //Custom fields in JSON umwandeln
+    for (const key in data) {
+        if (key.startsWith('label_')) {
+            const id = key.split('_')[1];
+            const fieldName = data[key];
+            const fieldValue = data[`input_${id}`];
+            customFields[fieldName] = fieldValue;
+
+        }
+    }
+
+    const values = [
+        data['firstName'],
+        data['lastName'],
+        data['email'],
+        data['telephoneNumber'],
+        customFields
+    ];
+
+    //Insert data into db
+    try {
+        await pool.query(insertQuery, values);
+        console.log(`New contact was created.`);
+        res.send('New contact was created!');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error');
+    }
+});
+
+//POST edit contact
+
+app.post('/edit/contact', async (req, res) => {
+    const data = req.body;
+    const id = req.params.id;
+
+    const editQuery = `
+        UPDATE contacts 
+        SET first_name = $1, 
+            last_name = $2, 
+            email = $3, 
+            telephone_number = $4, 
+            custom_fields = $5
+        WHERE id = $6`;
+
+    const customFields = {};
+
+    for (const key in data) {
+        if (key.startsWith('label_')) {
+            const id = key.split('_')[1];
+            const fieldName = data[key];
+            const fieldValue = data[`input_${id}`];
+            customFields[fieldName] = fieldValue;
+        }
+    }
+
+    const values = [
+        data['firstName'],
+        data['lastName'],
+        data['email'],
+        data['telephoneNumber'],
+        customFields,
+        id
+    ];
+
+    try {
+        await pool.query(editQuery, values);
+        console.log(`Contact was edited.`);
+        res.send('Contact was edited!');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error');
+    }
+
+});
+
+//GET data for edit
+app.get('/api/contacts/:id', async (req, res) => {
+    const contactId = req.params.id;
+
+    const selectQuery = `
+        SELECT * FROM contacts 
+        WHERE id = $1
+    `;
+
+    try {
+        const result = await pool.query(selectQuery, [contactId]);
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error fetching single contact:', error);
+        res.status(500).send('Error');
     }
 });
