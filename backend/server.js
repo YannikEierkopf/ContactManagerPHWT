@@ -183,7 +183,8 @@ app.post('/create/contact', async (req, res) => {
             telephone_number,
             custom_fields
         )
-        VALUES ($1, $2, $3, $4, $5)`;
+        VALUES ($1, $2, $3, $4, $5) 
+        RETURNING id`;
 
 
     const customFields = {};
@@ -205,8 +206,32 @@ app.post('/create/contact', async (req, res) => {
         data['telephoneNumber'],
         customFields
     ];
+    //Insert data into db and link contact to user
+    try {
+        const result = await pool.query(insertQuery, values);
+        const contactID = result.rows[0].id;
+
+        const userID = parseInt(data.userID, 10);
+        if (!userID) {
+            return res.status(400).send('userID fehlt');
+        }
+
+        await pool.query(
+            `INSERT INTO user_contacts (user_id, contact_id) VALUES ($1, $2)`,
+            [userID, contactID]
+        );
+
+        console.log(`New contact was created and linked to user ${userID}.`);
+        res.redirect('../dashboard/dashboard.html');
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error');
+    }
+});
 
     //Insert data into db
+    /*
     try {
         await pool.query(insertQuery, values);
         console.log(`New contact was created.`);
@@ -215,8 +240,9 @@ app.post('/create/contact', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('Error');
     }
+    
 });
-
+*/
 //POST edit contact
 
 app.post('/edit/contact', async (req, res) => {

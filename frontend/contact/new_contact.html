@@ -37,6 +37,7 @@
                     <label for="telephoneNumber">Telefonnummer</label><br>
                     <input type="tel" name="telephoneNumber" id="telephoneNumber" placeholder="Gebe den Telefonnummer ein">
                 </div>
+                <input type="hidden" name="userID" id="userID"> <!--Verstecktes Feld, um die UserID zu übergeben-->
             </fieldset>
 
             <fieldset>
@@ -47,6 +48,12 @@
                 <button type="button" onclick="addField()">Neues Feld erstellen</button>
 
                 <script>
+                    //Beim Laden der Seite wird die UserID des eingeloggten Benutzers in das versteckte Feld eingetragen, damit der Kontakt diesem Benutzer zugeordnet werden kann
+                    document.querySelector("form").addEventListener("submit", function() {
+                    const user = JSON.parse(sessionStorage.getItem("user"));
+                    document.getElementById("userID").value = user.userID;
+                    });
+
                     function addField() {
                         const container = document.getElementById('customFields');
                         const field = document.createElement('div');
