@@ -4,8 +4,13 @@ const storedUser = sessionStorage.getItem("user");
 
 if (storedUser) {
   user = JSON.parse(storedUser);
+if (!user){
+    window.location.href="../login/login.html";
+  }
+//Bereiche sichtbar machen
   document.getElementById(user.role).style.display = "block";
 }
+ 
 /*
 //Logout Button (für Benutzer und Admin)
 const logoutButton = document.querySelector("header button");
@@ -17,8 +22,45 @@ logoutButton.addEventListener("click", function(){
 });
 */
 //User Funktionalität
-if (user.role === "user") {
+if (user &&user.role === "user") {
+  const contactList = document.getElementById("contactList");
 
+   // Funktion, um Kontakte aus der Datenbank zu laden
+  async function loadContacts() {
+    try {
+      const response = await fetch("http://localhost:3000/get/contact/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userID: user.userID }) // nutzt die userID vom SessionStorage
+      });
+
+      const contacts = await response.json();
+
+      contactList.innerHTML = ""; // vorherige Liste leeren
+
+      contacts.forEach(contact => {
+        const li = document.createElement("li");
+        li.textContent =
+          contact.first_name + " " +
+          contact.last_name + " | " +
+          (contact.email || "keine Email") + " | " +
+          (contact.telephone_number || "keine Telefonnummer");
+        contactList.appendChild(li);
+      });
+
+    } catch (error) {
+      console.error("Fehler beim Laden der Kontakte:", error);
+    }
+  }
+
+  // Funktion direkt aufrufen
+  loadContacts();
+}
+
+
+//ALt, auskommentiert
+/*
+ 
   const contactList = document.getElementById("contactList");
 
   const contacts = [
@@ -32,8 +74,8 @@ if (user.role === "user") {
     contactList.appendChild(li);
   });
 
-}
 
+*/
 
 //Admin Funktionalität
 if (user.role === "admin") {
@@ -117,6 +159,22 @@ fetch("http://localhost:3000/api/users", {
 }
 
 /*
+
+--Neuer realer Testbenutzer--
+sessionStorage.setItem("user", JSON.stringify({
+  userID: 4,        
+  username: "Max.Mustermann",
+  role: "user"
+}));
+
+--Neuer realer Testadmin--
+sessionStorage.setItem("user", JSON.stringify({
+  userID: 5,        
+  username: "Admin",
+  role: "admin"
+}));
+
+
 --Benutzer--
 sessionStorage.setItem("user", JSON.stringify({
   username: "Lisa",
