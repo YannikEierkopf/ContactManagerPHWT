@@ -1,0 +1,119 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: white;
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header h1 {
+    margin-top: 0;
+    color: darkcyan;
+    text-align: center;
+}
+
+main {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+fieldset {
+    border: 1px solid gray;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: white;
+}
+
+legend {
+    font-weight: bold;
+    color: darkcyan;
+    background: white;
+    padding: 5px 10px;
+    border: 1px solid gray;
+    border-radius: 4px;
+}
+
+.field {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: 500;
+    font-size: 14px;
+    color: black;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: cornflowerblue;
+    outline: none;
+}
+
+#customFields div {
+    background: white;
+    border: 1px dashed gray;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px !important;
+}
+
+button {
+    background-color: darkcyan;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: darkslategrey;
+}
+
+#customFields button {
+    background-color: red;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#customFields button:hover {
+    background-color: darkred;
+}
+
+button[type="submit"] {
+    width: 100%;
+    background-color: green;
+    font-size: 16px;
+    padding: 15px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button[type="submit"]:hover {
+    background-color: darkgreen;
+}
