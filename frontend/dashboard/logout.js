@@ -16,7 +16,7 @@ function resetInactivityTimer(){
     inactivityTimer = setTimeout(function(){
         alert("Du wurdest wegen Inaktivität ausgeloggt.");
         logout();
-    }, 5 * 50 * 1000); // 5 Minuten
+    }, 20 * 50 * 1000); // 20 Minuten
 }
 
 // Events, die den Timer resetten
