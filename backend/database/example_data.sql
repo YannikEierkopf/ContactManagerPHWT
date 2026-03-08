@@ -16,7 +16,7 @@ INSERT INTO contacts (first_name, last_name, email, telephone_number, custom_fie
 ('Bruce', 'Wayne', 'bruce@example.com', '+49666666666', '{"priority": "high"}'),
 ('Clark', 'Kent', 'clark@example.com', '+49777777777', '{}'),
 ('Tony', 'Stark', 'tony@example.com', '+49888888888', '{"company": "Stark Industries"}');
-rs
+
 INSERT INTO user_contacts (user_id, contact_id) VALUES
 (1, 1),
 (1, 2),
