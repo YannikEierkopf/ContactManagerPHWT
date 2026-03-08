@@ -3,10 +3,11 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 // Initialize server
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'login', 'login.html'));
@@ -20,8 +21,8 @@ app.use(express.json()); // allow JSON bodies for API endpoints
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'contact_manager_db',
-    password: 'hallo',      //Sollte noch geändert werden, eine Anforderung sagt, keine Passwörter im Repository zu speichern.
+    database: process.env.DB_NAME || 'contact_manager_db',
+    password: process.env.DB_PASSWORD,
     port: 5432,
 });
 
@@ -309,3 +310,4 @@ app.get('/api/contacts/:id', async (req, res) => {
         res.status(500).send('Error');
     }
 });
+
