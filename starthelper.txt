@@ -1,0 +1,62 @@
+ContactManagerPHWT - Start Helper (Windows + VS Code)
+
+Diese Anleitung ist für den allerersten Start auf einem neuen Rechner.
+
+1) Voraussetzungen installieren
+- Node.js LTS installieren: https://nodejs.org/
+- PostgreSQL installieren: https://www.postgresql.org/download/windows/
+
+2) Projekt in VS Code oeffnen
+- Ordner `ContactManagerPHWT` in VS Code öffnen.
+- Terminal in VS Code öffnen: Terminal -> New Terminal
+
+3) Node-Abhängigkeiten installieren
+Im Projektordner ausführen:
+`npm install`
+
+4) Datenbank vorbereiten
+- PostgreSQL muss laufen.
+- In PostgreSQL eine Datenbank mit Name `contact_manager_db` anlegen.
+- SQL-Skripte ausfuehren:
+  - `backend/database/create_table_contact.sql`
+  - optional Testdaten: `backend/database/example_data.sql`
+
+5) .env anlegen
+- Im Projektroot eine Datei `.env` erstellen (falls noch nicht vorhanden).
+- Inhalt:
+
+PORT=3000
+DB_NAME=contact_manager_db
+DB_PASSWORD=DEIN_POSTGRES_PASSWORT
+
+Wichtig:
+- `DB_PASSWORD` muss das echte Passwort vom PostgreSQL-User `postgres` sein.
+
+6) Backend starten
+Im Projektordner:
+`npm start`
+
+Erwartete Ausgabe im Terminal:
+- `Server runs: http://localhost:3000`
+- `Connected to PostgreSQL database`
+
+7) Anwendung im Browser testen
+- Öffne: `http://localhost:3000/`
+- Login/Navigation testen
+- Kontakte anlegen/bearbeiten testen
+
+8) Häufige Fehler
+
+Fehler: `Passwort-Authentifizierung ... fehlgeschlagen (28P01)`
+- `.env` -> `DB_PASSWORD` ist falsch.
+- Mit psql prüfen:
+  `psql -U postgres -h localhost -p 5432 -d contact_manager_db`
+
+Fehler: `database "contact_manager_db" does not exist`
+- Datenbank noch nicht angelegt oder falsch bennant.
+
+Fehler: `relation ... does not exist`
+- Tabellen-Skript `create_table_contact.sql` wurde noch nicht ausgeführt.
+
+Fehler: Port 3000 bereits belegt
+- Andere App auf Port 3000 beenden oder in `.env` `PORT` ändern (z. B. 3001).
