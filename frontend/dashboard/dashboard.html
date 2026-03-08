@@ -8,6 +8,7 @@
     <script src="dashboard.js" defer></script> <!--defer, Ausführung erst wenn HTML geparst wurde -->
     <script src="logout.js" defer></script>
     <script src="filter.js" defer></script>
+    <!-- <script src="search.js" defer></script> -->
 </head>
 <body>
     <header>
@@ -26,19 +27,17 @@
                 <label for="contactSearch">Kontakt suchen (nach Benutzername)</label>
                 <input type="text" id="contactSearch" name="contactSearch" maxlength="128">
 
-
-                
-                 <!-- Filter Formular -->
             <form id="contactFilterForm">
                 <label for="contactFilter">Kontakte filtern</label>
                 <select id="contactFilter" name="contactFilter">
                     <option value="all">Alle</option>
-                    <option value="name">Name</option>
-                    <option value="company">Firma</option>
-                    <option value="place">Ort</option>
+                    <option value="Vorname">Vorname</option>
+                    <option value="Nachname">Nachname</option>
+                    <option value="E-Mail">E-Mail</option>
+                    <option value="Telefonnummer">Telefonnummer</option>
                 </select>
 
-                <label for="customFilter">Eigene Filter (optional)</label>
+                <label for="customFilter">Filter nach Costum-Field</label>
                 <input type="text" id="customFilter" name="customFilter" maxlength="128">
 
                 <button type="submit">Filtern</button>

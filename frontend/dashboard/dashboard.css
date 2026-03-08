@@ -162,3 +162,9 @@
         #contactList li:hover {
             background-color: #007BFF; /* helle Hintergrundfarbe beim Überfahren */
         }
+        /* Ganzer Block als Link, bessere Bedieung*/
+        #contactList li a {
+            display: block;        /* Link nimmt ganze Breite ein */
+            text-decoration: none;
+            color: inherit;
+        }

@@ -38,17 +38,13 @@ if (user &&user.role === "user") {
 
       contactList.innerHTML = ""; // vorherige Liste leeren
 
-      contacts.forEach(contact => {
+  // Link erstellen mit Query Parameter ?id=contactID
+ contacts.forEach(contact => {
   const li = document.createElement("li");
 
-  // Link erstellen mit Query Parameter ?id=contactID
   const link = document.createElement("a");
   link.href = `../contact/edit_contact.html?id=${contact.id}`;
-  link.textContent =
-    contact.first_name + " " +
-    contact.last_name + " | " +
-    (contact.email || "keine Email") + " | " +
-    (contact.telephone_number || "keine Telefonnummer");
+  link.textContent = contact.first_name + " " + contact.last_name;
 
   li.appendChild(link);
   contactList.appendChild(li);
