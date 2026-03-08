@@ -3,33 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anmelden - Kontakt-Verwaltung</title>
+    <title>Registrieren - Kontakt-Verwaltung</title>
     <link rel="stylesheet" href="/login/login.css">
-    <script src="/login/login.js" defer></script>
+    <script src="/login/signup.js" defer></script>
 </head>
 <body>
     <header></header>
     <main class="login-container">
-        <h1>Kontakt-Verwaltung</h1>
+        <h1>Registrieren</h1>
         <form id="loginForm">
             <section class="form-group">
                 <label for="username">Benutzername</label>
-                <input type="text" id="username" name="username" placeholder="Gib deinen Benutzernamen ein" required>
+                <input type="text" id="username" name="username" placeholder="Erstelle deinen Benutzernamen" required>
             </section>
 
             <section class="form-group">
                 <label for="password">Passwort</label>
-                <input type="password" id="password" name="password" placeholder="Gib dein Passwort ein" required>
+                <input type="password" id="password" name="password" placeholder="Erstelle dein Passwort" required>
                 <div class="error-message" id="passwordError"></div>
             </section>
 
-            <section class="remember-me">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Anmeldung merken</label>
-            </section>
-
-            <button type="submit" class="btn-login">Anmelden</button>
-            Du hast noch keinen Account? <a href="/login/signup.html">Registrieren</a>
+            <button type="submit" class="btn-login" onclick="window.location.href='/login/login.html'">Zurück zum Login</button>
+            <button type="submit" class="btn-login">Registrieren</button>
         </form>
     </main>
     <footer>
