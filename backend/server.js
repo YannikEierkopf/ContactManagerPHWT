@@ -114,7 +114,7 @@ app.post('/api/users', async (req, res) => {
     }
 });
 */
-// login: verify credentials and return user id if ok
+// login: verify credentials and return user id and role if ok
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -122,7 +122,7 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        const select = `SELECT id, password_hash FROM users WHERE username = $1`;
+        const select = `SELECT id, password_hash, role FROM users WHERE username = $1`;
         const { rows } = await pool.query(select, [username]);
         if (rows.length === 0) {
             return res.status(401).send('invalid credentials');
@@ -132,7 +132,7 @@ app.post('/login', async (req, res) => {
         if (!match) {
             return res.status(401).send('invalid credentials');
         }
-        res.json({ userID: user.id });
+        res.json({ userID: user.id, role: user.role });
     } catch (err) {
         console.error(err);
         res.status(500).send('login error');

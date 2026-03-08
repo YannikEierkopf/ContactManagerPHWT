@@ -17,9 +17,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (response.ok) {
             const data = await response.json();
             const userID = data.userID;
+            const role = data.role;
             
-            // Speichere userID im LocalStorage
-            localStorage.setItem('userID', userID);
+            // Speichere user Daten im SessionStorage
+            sessionStorage.setItem('user', JSON.stringify({ userID, role }));
             
             if (rememberMe) {
                 localStorage.setItem('username', username);
