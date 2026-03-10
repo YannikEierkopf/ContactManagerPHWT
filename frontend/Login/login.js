@@ -1,3 +1,5 @@
+const passwordError = document.getElementById('passwordError');
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -25,14 +27,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             if (rememberMe) {
                 localStorage.setItem('username', username);
             }
+            else {
+                localStorage.removeItem('username');
+            }
             
-            // Weiterleitung zum Dashboard
             window.location.href = '/dashboard/dashboard.html';
         } else {
-            document.getElementById('passwordError').textContent = 'Ungültige Anmeldedaten!';
+            passwordError.textContent = 'Ungültige Anmeldedaten!';
         }
     } catch (error) {
         console.error('Login error:', error);
-        document.getElementById('passwordError').textContent = 'Ein Fehler ist aufgetreten!';
+        passwordError.textContent = 'Ein Fehler ist aufgetreten!';
     }
 });

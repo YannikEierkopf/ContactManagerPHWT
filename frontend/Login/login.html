@@ -8,38 +8,37 @@
     <script src="/login/login.js" defer></script>
 </head>
 <body>
-    <header></header>
     <main class="login-container">
         <h1>Kontakt-Verwaltung</h1>
         <form id="loginForm">
-            <section class="form-group">
+            <div class="form-group">
                 <label for="username">Benutzername</label>
                 <input type="text" id="username" name="username" placeholder="Gib deinen Benutzernamen ein" required>
-            </section>
+            </div>
 
-            <section class="form-group">
+            <div class="form-group">
                 <label for="password">Passwort</label>
                 <input type="password" id="password" name="password" placeholder="Gib dein Passwort ein" required>
                 <div class="error-message" id="passwordError"></div>
-            </section>
+            </div>
 
-            <section class="remember-me">
+            <div class="remember-me">
                 <input type="checkbox" id="remember" name="remember">
                 <label for="remember">Anmeldung merken</label>
-            </section>
+            </div>
 
             <button type="submit" class="btn-login">Anmelden</button>
-            <section class="signup-link">
-            Du hast noch keinen Account? <a href="/login/signup.html">Registrieren</a>
-            </section>
+            <div class="signup-link">
+            Du hast noch keinen Account? <a href="/login/signup/signup.html">Registrieren</a>
+            </div>
         </form>
     </main>
     <footer>
-        <p>&copy; 2026 Kontakt-Verwaltung. Alle Rechte vorbehalten. <br>
-            <a href="Impressum.html">Impressum</a> •
-            <a href="Datenschutz.html">Datenschutz</a> •
-            <a href="Kontakt.html">Kontakt</a>
-        </p>
+        <nav>&copy; 2026 Kontakt-Verwaltung. Alle Rechte vorbehalten. <br>
+            <a href="/footer/impressum.html">Impressum</a>
+            <a href="/footer/datenschutz.html">Datenschutz</a>
+            <a href="/footer/kontakt.html">Kontakt</a>
+        </nav>
     </footer>
 </body>
 </html>
