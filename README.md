@@ -9,8 +9,8 @@ Kontaktverwaltung mit Node.js, Express und PostgreSQL.
 
 ## Setup
 
-1. Projektordner in VS Code oeffnen.
-2. Abhaengigkeiten installieren:
+1. Projektordner in VS Code öffnen.
+2. Abhängigkeiten installieren:
 
 ```bash
 npm install
@@ -19,7 +19,7 @@ npm install
 3. PostgreSQL-Datenbank anlegen:
 - Name: `contact_manager_db`
 
-4. SQL-Skripte ausfuehren:
+4. SQL-Skripte ausführen:
 - `backend/database/create_table_contact.sql`
 - optional: `backend/database/example_data.sql`
 
@@ -50,11 +50,11 @@ App im Browser:
 ## Session Management
 
 - Sessions werden serverseitig in PostgreSQL gespeichert.
-- Session-Tabelle: `user_sessions` (konfigurierbar ueber `SESSION_TABLE_NAME`).
+- Session-Tabelle: `user_sessions` (konfigurierbar über SESSION_TABLE_NAME`).
 - Login setzt `req.session.user`.
-- Logout zerstoert die Session serverseitig.
+- Logout zerstört die Session serverseitig.
 
-## Haeufige Fehler
+## Häufige Fehler
 
 - `Passwort-Authentifizierung ... fehlgeschlagen (28P01)`
   - `DB_PASSWORD` in `.env` ist falsch.
@@ -63,7 +63,7 @@ App im Browser:
   - Datenbank wurde noch nicht angelegt.
 
 - `relation ... does not exist`
-  - SQL-Skript `create_table_contact.sql` wurde nicht ausgefuehrt.
+  - SQL-Skript `create_table_contact.sql` wurde nicht ausgeführt.
 
 - Port 3000 belegt
   - In `.env` `PORT` anpassen (z. B. `3001`).
