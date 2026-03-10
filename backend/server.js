@@ -338,3 +338,22 @@ app.post('/create/inquire', async (req, res) => {
         res.status(500).send('Error');
     }
 })
+
+// POST delete contact
+app.post('/delete/contact', async (req, res) => {
+    const id = req.body.id;
+
+    const deleteQuery = `
+        DELETE FROM contacts 
+        WHERE id = $1
+    `;
+
+    try {
+        await pool.query(deleteQuery, [id]);
+        console.log(`Contact was deleted.`);
+        res.sendStatus(200);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error');
+    }
+});

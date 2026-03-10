@@ -68,3 +68,23 @@ function loadCustomField(labelName, inputValue) {
 
     container.appendChild(field);
 }
+
+async function deleteContact() {
+    const contactId = document.getElementById('contactId').value;
+
+    try {
+        const response = await fetch('/delete/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${contactId}`
+        });
+
+        if (response.ok) {
+            window.location.href = '/dashboard/dashboard.html';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
