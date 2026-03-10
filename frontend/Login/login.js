@@ -13,16 +13,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ username, password })
         });
         
         if (response.ok) {
-            const data = await response.json();
-            const userID = data.userID;
-            const role = data.role;
-            
-            // Speichere user Daten im SessionStorage
-            sessionStorage.setItem('user', JSON.stringify({ userID, role }));
+            await response.json();
             
             if (rememberMe) {
                 localStorage.setItem('username', username);
