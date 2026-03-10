@@ -1,5 +1,7 @@
 // Load packages
 const express = require('express');
+const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
@@ -17,6 +19,10 @@ app.get('/', (req, res) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // allow JSON bodies for API endpoints
 
+const sessionSecret = process.env.SESSION_SECRET;
+const sessionMaxAge = Number(process.env.SESSION_MAX_AGE_MS) || 5 * 60 * 1000;
+const sessionTableName = process.env.SESSION_TABLE_NAME || 'user_sessions';
+
 // PostgreSQL configuration
 const pool = new Pool({
     user: 'postgres',
@@ -29,6 +35,21 @@ const pool = new Pool({
 pool.connect()
     .then(() => console.log('Connected to PostgreSQL database'))
     .catch(err => console.error('Database connection error:', err));
+
+app.use(session({
+    store: new pgSession({
+        pool,
+        tableName: sessionTableName,
+        createTableIfMissing: true
+    }),
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: sessionMaxAge,
+        httpOnly: true,
+    }
+}));
 
 //Start server
 app.listen(port, () => {
@@ -68,52 +89,58 @@ async function getContacts(userID) {
     return rows;
 }
 
+async function userOwnsContact(userID, contactID) {
+    const query = `
+        SELECT 1
+        FROM user_contacts
+        WHERE user_id = $1 AND contact_id = $2
+        LIMIT 1`;
+    const { rows } = await pool.query(query, [userID, contactID]);
+    return rows.length > 0;
+}
+
+function requireLogin(req, res, next) {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ message: 'Nicht eingeloggt' });
+    }
+    next();
+}
+
+function requireAdmin(req, res, next) {
+    if (req.session.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Kein Zugriff' });
+    }
+    next();
+}
+
 // API routes ---------------------------------------------------------------
 // (TODO TESTEN)
 // admin creates a new user with explicit role
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
     const { username, password, role } = req.body;
 
     if (!username || !password || !role) {
-        return res.status(400).json({ error: 'username, password and role are required' });
+        return res.status(400).json({ error: 'Benutzername, Passwort und Rolle sind erforderlich' });
     }
 
     if (!['admin', 'user'].includes(role)) {
-        return res.status(400).json({ error: 'role must be admin or user' });
+        return res.status(400).json({ error: 'Rolle muss admin oder user sein' });
     }
 
     try {
         const hashed = await hashPassword(password);
         const insert = `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)`;
         await pool.query(insert, [username, hashed, role]);
-        return res.status(201).json({ message: 'user created' });
+        return res.status(201).json({ message: 'Benutzer erstellt' });
     } catch (err) {
         if (err.code === '23505') {
-            return res.status(409).json({ error: 'username already exists' });
+            return res.status(409).json({ error: 'Benutzername existiert bereits' });
         }
         console.error(err);
-        return res.status(500).json({ error: 'error creating user' });
+        return res.status(500).json({ error: 'Fehler beim Erstellen des Benutzers' });
     }
 });
 
-// register a new user (expects username & password in body)
-/* (TODO TESTEN ODER LÖSCHEN) app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).send('username and password required');
-    }
-
-    try {
-        const hashed = await hashPassword(password);
-        const insert = `INSERT INTO users (username, password_hash) VALUES ($1, $2)`;
-        await pool.query(insert, [username, hashed]);
-        res.send('user created');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('error registering user');
-    }
-});
-*/
 // login: verify credentials and return user id and role if ok
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -122,58 +149,90 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        const select = `SELECT id, password_hash, role FROM users WHERE username = $1`;
+        const select = `SELECT id, username, password_hash, role FROM users WHERE username = $1`;
         const { rows } = await pool.query(select, [username]);
         if (rows.length === 0) {
-            return res.status(401).send('invalid credentials');
+            return res.status(401).send('Ungueltige Anmeldedaten');
         }
         const user = rows[0];
         const match = await bcrypt.compare(password, user.password_hash);
         if (!match) {
-            return res.status(401).send('invalid credentials');
+            return res.status(401).send('Ungueltige Anmeldedaten');
         }
-        res.json({ userID: user.id, role: user.role });
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            role: user.role
+        };
+
+        res.json({
+            message: 'Login erfolgreich',
+            userID: user.id,
+            username: user.username,
+            role: user.role
+        });
     } catch (err) {
         console.error(err);
-        res.status(500).send('login error');
+        res.status(500).send('Login-Fehler');
     }
 });
 
+app.get('/check-session', (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ message: 'Keine aktive Sitzung' });
+    }
+    res.json(req.session.user);
+});
+
+app.post('/logout', requireLogin, (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Abmelden fehlgeschlagen' });
+        }
+        res.clearCookie('connect.sid');
+        return res.json({ message: 'Erfolgreich abgemeldet' });
+    });
+});
+
 // update a user's password
-app.post('/set/password', async (req, res) => {
+app.post('/set/password', requireLogin, async (req, res) => {
     const { userID, newPassword } = req.body;
-    if (!userID || !newPassword) {
-        return res.status(400).send('user-ID and new Password required');
+    const isAdmin = req.session.user.role === 'admin';
+    const targetUserID = isAdmin ? Number(userID) : req.session.user.id;
+
+    if (!newPassword) {
+        return res.status(400).send('Neues Passwort ist erforderlich');
+    }
+
+    if (!targetUserID) {
+        return res.status(400).send('Gültige Benutzer-ID erforderlich');
     }
 
     try {
-        await setPassword(userID, newPassword);
-        res.send('password updated');
+        await setPassword(targetUserID, newPassword);
+        res.send('Passwort aktualisiert');
     } catch (err) {
         console.error(err);
-        res.status(500).send('error updating password');
+        res.status(500).send('Fehler beim Aktualisieren des Passworts');
     }
 });
 
 // fetch contacts for a user
-app.post('/get/contact/', async (req, res) => {
-    const { userID } = req.body;
-    if (!userID) {
-        return res.status(400).send('user-ID required');
-    }
-
+app.post('/get/contact/', requireLogin, async (req, res) => {
     try {
+        const userID = req.session.user.id;
         const contacts = await getContacts(userID);
         res.json(contacts);
     } catch (err) {
         console.error(err);
-        res.status(500).send('error retrieving contacts');
+        res.status(500).send('Fehler beim Laden der Kontakte');
     }
 });
 
 // Contact
 // POST new contact
-app.post('/create/contact', async (req, res) => {
+app.post('/create/contact', requireLogin, async (req, res) => {
     const data = req.body;
 
     const insertQuery = `
@@ -211,11 +270,7 @@ app.post('/create/contact', async (req, res) => {
     try {
         const result = await pool.query(insertQuery, values);
         const contactID = result.rows[0].id;
-
-        const userID = parseInt(data.userID, 10);
-        if (!userID) {
-            return res.status(400).send('userID fehlt');
-        }
+        const userID = req.session.user.id;
 
         await pool.query(
             `INSERT INTO user_contacts (user_id, contact_id) VALUES ($1, $2)`,
@@ -227,30 +282,27 @@ app.post('/create/contact', async (req, res) => {
 
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).send('Error');
+        res.status(500).send('Fehler');
     }
 });
 
-    //Insert data into db
-    /*
-    try {
-        await pool.query(insertQuery, values);
-        console.log(`New contact was created.`);
-        res.redirect('/dashboard.html');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Error');
-    }
-    
-});
-*/
 //POST edit contact
 
-app.post('/edit/contact', async (req, res) => {
+app.post('/edit/contact', requireLogin, async (req, res) => {
     const data = req.body;
     //const id = req.params.id;
     const id = parseInt(data.id, 10); // von hidden input im Formular
     if (!id) return res.status(400).send('contact ID fehlt');
+
+    try {
+        const allowed = await userOwnsContact(req.session.user.id, id);
+        if (!allowed) {
+            return res.status(403).send('Kein Zugriff');
+        }
+    } catch (error) {
+        console.error('Error checking contact ownership:', error);
+        return res.status(500).send('Fehler');
+    }
 
 
     const editQuery = `
@@ -288,14 +340,27 @@ app.post('/edit/contact', async (req, res) => {
         res.redirect('../dashboard/dashboard.html');
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).send('Error');
+        res.status(500).send('Fehler');
     }
 
 });
 
 //GET data for edit
-app.get('/api/contacts/:id', async (req, res) => {
-    const contactId = req.params.id;
+app.get('/api/contacts/:id', requireLogin, async (req, res) => {
+    const contactId = parseInt(req.params.id, 10);
+    if (!contactId) {
+        return res.status(400).send('Ungueltige Kontakt-ID');
+    }
+
+    try {
+        const allowed = await userOwnsContact(req.session.user.id, contactId);
+        if (!allowed) {
+            return res.status(403).send('Kein Zugriff');
+        }
+    } catch (error) {
+        console.error('Error checking contact ownership:', error);
+        return res.status(500).send('Fehler');
+    }
 
     const selectQuery = `
         SELECT * FROM contacts 
@@ -307,7 +372,7 @@ app.get('/api/contacts/:id', async (req, res) => {
         res.json(result.rows[0]);
     } catch (error) {
         console.error('Error fetching single contact:', error);
-        res.status(500).send('Error');
+        res.status(500).send('Fehler');
     }
 });
 
@@ -332,16 +397,29 @@ app.post('/create/inquire', async (req, res) => {
     try {
         await pool.query(insertQuery, values);
         console.log(`New inquire was created.`);
-        res.send('New inquire was created!');
+        res.send('Neue Anfrage wurde erstellt!');
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).send('Error');
+        res.status(500).send('Fehler');
     }
 })
 
 // POST delete contact
-app.post('/delete/contact', async (req, res) => {
-    const id = req.body.id;
+app.post('/delete/contact', requireLogin, async (req, res) => {
+    const id = Number(req.body.id);
+    if (!id) {
+        return res.status(400).send('Ungueltige Kontakt-ID');
+    }
+
+    try {
+        const allowed = await userOwnsContact(req.session.user.id, id);
+        if (!allowed) {
+            return res.status(403).send('Kein Zugriff');
+        }
+    } catch (error) {
+        console.error('Error checking contact ownership:', error);
+        return res.status(500).send('Fehler');
+    }
 
     const deleteQuery = `
         DELETE FROM contacts 
@@ -354,6 +432,6 @@ app.post('/delete/contact', async (req, res) => {
         res.sendStatus(200);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).send('Error');
+        res.status(500).send('Fehler');
     }
 });

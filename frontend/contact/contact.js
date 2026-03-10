@@ -1,8 +1,3 @@
-//Beim Laden der Seite wird die UserID des eingeloggten Benutzers in das versteckte Feld eingetragen, damit der Kontakt diesem Benutzer zugeordnet werden kann
-document.querySelector("form").addEventListener("submit", function() {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    document.getElementById("userID").value = user.userID;
-});
 
 function addField() {
     const container = document.getElementById('customFields');

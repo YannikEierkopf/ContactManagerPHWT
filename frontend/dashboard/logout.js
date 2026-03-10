@@ -1,29 +1,37 @@
-// Logout als Funktion (ergänzt)
-function logout(){
-    sessionStorage.removeItem("user");
-    window.location.href = "../login/login.html";
+// Logout function
+async function logout() {
+    try {
+        await fetch("/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+    } finally {
+        window.location.href = "../login/login.html";
+    }
 }
 
-// Logout Button
+// Logout button
 const logoutButton = document.querySelector("header button");
 logoutButton.addEventListener("click", logout);
 
-// Automatischer Logout nach 5 Minuten
+// Automatic logout after inactivity
 let inactivityTimer;
-function resetInactivityTimer(){
-    clearTimeout (inactivityTimer);
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
 
-    inactivityTimer = setTimeout(function(){
+    inactivityTimer = setTimeout(function() {
         alert("Du wurdest wegen Inaktivität ausgeloggt.");
         logout();
-    }, 20 * 50 * 1000); // 20 Minuten
+    }, 20 * 60 * 1000); // 20 Minuten
 }
 
-// Events, die den Timer resetten
+// Events that reset the timer
 document.addEventListener("mousemove", resetInactivityTimer);
 document.addEventListener("keydown", resetInactivityTimer);
 document.addEventListener("click", resetInactivityTimer);
 document.addEventListener("scroll", resetInactivityTimer);
 
-// Timer beim Laden starten
+// Start timer on load
 resetInactivityTimer();

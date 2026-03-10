@@ -1,90 +1,75 @@
-//Authetifizierung User oder Admin
-let user = null;  // const weggelassen, damit es auch auf einer höheren Ebene verfügbar ist
-const storedUser = sessionStorage.getItem("user");
+let user = null;
 
-if (storedUser) {
-  user = JSON.parse(storedUser);
-if (!user){
-    window.location.href="../login/login.html";
-  }
-//Bereiche sichtbar machen
-  document.getElementById(user.role).style.display = "block";
-}
- 
-/*
-//Logout Button (für Benutzer und Admin)
-const logoutButton = document.querySelector("header button");
-
-logoutButton.addEventListener("click", function(){
-    sessionStorage.removeItem("user");
-    //window.location.href = "../login/login.html"
-    window.location.href="../login/login.html";
-});
-*/
-//User Funktionalität
-if (user &&user.role === "user") {
-  const contactList = document.getElementById("contactList");
-
-   // Funktion, um Kontakte aus der Datenbank zu laden
-  async function loadContacts() {
-    try {
-      const response = await fetch("http://localhost:3000/get/contact/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userID: user.userID }) // nutzt die userID vom SessionStorage
-      });
-
-      const contacts = await response.json();
-
-      contactList.innerHTML = ""; // vorherige Liste leeren
-
-  // Link erstellen mit Query Parameter ?id=contactID
- contacts.forEach(contact => {
-  const li = document.createElement("li");
-
-  const link = document.createElement("a");
-  link.href = `../contact/edit_contact.html?id=${contact.id}`;
-  link.textContent = contact.first_name + " " + contact.last_name;
-
-  li.appendChild(link);
-  contactList.appendChild(li);
-});
-
-    } catch (error) {
-      console.error("Fehler beim Laden der Kontakte:", error);
-    }
-  }
-
-  // Funktion direkt aufrufen
-  loadContacts();
+function redirectToLogin() {
+  window.location.href = "../login/login.html";
 }
 
-
-//ALt, auskommentiert
-/*
- 
-  const contactList = document.getElementById("contactList");
-
-  const contacts = [
-    { name: "Max Mustermann", company: "Firma A", city: "Berlin" },
-    { name: "Lisa Müller", company: "Firma B", city: "Hamburg" }
-  ];
-
-  contacts.forEach(function(contact) {
-    const li = document.createElement("li");
-    li.textContent = contact.name + " | " + contact.company + " | " + contact.city;
-    contactList.appendChild(li);
+async function checkSession() {
+  const response = await fetch("/check-session", {
+    credentials: "include"
   });
 
+  if (!response.ok) {
+    redirectToLogin();
+    return null;
+  }
 
-*/
+  return response.json();
+}
 
-//Admin Funktionalität
-if (user.role === "admin") {
+function showRoleSection(role) {
+  const section = document.getElementById(role);
+  if (section) {
+    section.style.display = "block";
+  }
+}
 
+async function loadContacts() {
+  const contactList = document.getElementById("contactList");
+  if (!contactList) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/get/contact/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      redirectToLogin();
+      return;
+    }
+
+    if (!response.ok) {
+      console.error("Fehler beim Laden der Kontakte:", response.status);
+      return;
+    }
+
+    const contacts = await response.json();
+    contactList.innerHTML = "";
+
+    contacts.forEach((contact) => {
+      const li = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `../contact/edit_contact.html?id=${contact.id}`;
+      link.textContent = `${contact.first_name} ${contact.last_name}`;
+      li.appendChild(link);
+      contactList.appendChild(li);
+    });
+  } catch (error) {
+    console.error("Fehler beim Laden der Kontakte:", error);
+  }
+}
+
+function setupAdminCreateUser() {
   const form = document.getElementById("createUserForm");
+  if (!form) {
+    return;
+  }
 
-  form.addEventListener("submit", async function(event) {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const username = document.getElementById("username").value.trim();
@@ -92,22 +77,21 @@ if (user.role === "admin") {
     const role = document.getElementById("role").value;
 
     try {
-      const response = await fetch("http://localhost:3000/api/users", {
+      const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-          role: role
-        })
+        credentials: "include",
+        body: JSON.stringify({ username, password, role })
       });
 
-      const data = await response.json();
-      console.log(response.status);
-      console.log(data);
+      if (response.status === 401 || response.status === 403) {
+        redirectToLogin();
+        return;
+      }
 
+      const data = await response.json();
       if (!response.ok) {
         alert(data.error || "Benutzer konnte nicht erstellt werden.");
         return;
@@ -122,71 +106,26 @@ if (user.role === "admin") {
   });
 }
 
-/*
-console.log(username, password, role);
+async function initDashboard() {
+  user = await checkSession();
+  if (!user) {
+    return;
+  }
 
-später erstzen etwas in die Richtung
+  if (user.role !== "user" && user.role !== "admin") {
+    redirectToLogin();
+    return;
+  }
 
-fetch("http://localhost:3000/api/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    username: username,
-    password: password,
-    role: role
-  })
-})
-.then(response => response.json())
-.then(data => {
-  console.log("Antwort vom Server:", data);
-})
-.catch(error => {
-  console.error("Fehler:", error);
-});
-  });
+  showRoleSection(user.role);
+
+  if (user.role === "user") {
+    await loadContacts();
+  }
+
+  if (user.role === "admin") {
+    setupAdminCreateUser();
+  }
 }
 
-
-
-
-
-
-
-
-} else {
-    //window.location.href="../login/login.html";
-    window.location.href="loginzumtest.html";
-}
-
-/*
-
---Neuer realer Testbenutzer--
-sessionStorage.setItem("user", JSON.stringify({
-  userID: 4,        
-  username: "Max.Mustermann",
-  role: "user"
-}));
-
---Neuer realer Testadmin--
-sessionStorage.setItem("user", JSON.stringify({
-  userID: 5,        
-  username: "Admin",
-  role: "admin"
-}));
-
-
---Benutzer--
-sessionStorage.setItem("user", JSON.stringify({
-  username: "Lisa",
-  role: "user"
-}));
-
---Admin--
-sessionStorage.setItem("user", JSON.stringify({
-  username: "Max",
-  role: "admin"
-}));
-*/ 
-
+document.addEventListener("DOMContentLoaded", initDashboard);
