@@ -311,3 +311,30 @@ app.get('/api/contacts/:id', async (req, res) => {
     }
 });
 
+//POST inquiries
+app.post('/create/inquire', async (req, res) => {
+    const data = req.body;
+
+    const insertQuery = `
+        INSERT INTO inquiries (
+            name,
+            email,
+            message
+        )
+        VALUES ($1, $2, $3)`;
+
+    const values = [
+        data['name'],
+        data['email'],
+        data['message']
+    ];
+
+    try {
+        await pool.query(insertQuery, values);
+        console.log(`New inquire was created.`);
+        res.send('New inquire was created!');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error');
+    }
+})
