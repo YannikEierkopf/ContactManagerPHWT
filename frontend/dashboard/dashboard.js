@@ -54,7 +54,7 @@ async function loadContacts() {
       const li = document.createElement("li");
       const link = document.createElement("a");
       link.href = `../contact/edit_contact.html?id=${contact.id}`;
-      link.textContent = `${contact.first_name} ${contact.last_name}`;
+      link.textContent = `${contact.first_name} ${contact.last_name} ${contact.email} ${contact.telephone_number}`;
       li.appendChild(link);
       contactList.appendChild(li);
     });
