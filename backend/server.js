@@ -64,6 +64,10 @@ async function hashPassword(password) {
     return hash;
 }
 
+function normalizeUsername(username) {
+    return String(username || '').trim().toLowerCase();
+}
+
 async function getPassword(userID) {
     const query = `
         SELECT password_hash
@@ -118,8 +122,9 @@ function requireAdmin(req, res, next) {
 // admin creates a new user with explicit role
 app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
     const { username, password, role } = req.body;
+    const normalizedUsername = normalizeUsername(username);
 
-    if (!username || !password || !role) {
+    if (!normalizedUsername || !password || !role) {
         return res.status(400).json({ error: 'Benutzername, Passwort und Rolle sind erforderlich' });
     }
 
@@ -130,7 +135,7 @@ app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
     try {
         const hashed = await hashPassword(password);
         const insert = `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)`;
-        await pool.query(insert, [username, hashed, role]);
+        await pool.query(insert, [normalizedUsername, hashed, role]);
         return res.status(201).json({ message: 'Benutzer erstellt' });
     } catch (err) {
         if (err.code === '23505') {
@@ -144,13 +149,14 @@ app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
 // login: verify credentials and return user id and role if ok
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) {
+    const normalizedUsername = normalizeUsername(username);
+    if (!normalizedUsername || !password) {
         return res.status(400).send('username and password required');
     }
 
     try {
         const select = `SELECT id, username, password_hash, role FROM users WHERE username = $1`;
-        const { rows } = await pool.query(select, [username]);
+        const { rows } = await pool.query(select, [normalizedUsername]);
         if (rows.length === 0) {
             return res.status(401).send('Ungueltige Anmeldedaten');
         }
