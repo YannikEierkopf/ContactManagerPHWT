@@ -1,10 +1,10 @@
 -- Insert example users
 INSERT INTO users (username, password_hash, role) VALUES
-('Alice', '$2a$12$c2FiWJDCBU8WYPz9mgy6X.WNgV6KVH/Ua8MY56qkJKpDfW4fSn58G', 'admin'),
-('Bob Boss', '$2a$12$RnH71xYxA4gn28RdQ7/nuuTOLiVAlcG4FiYDirGBpItChJfF1U33m', 'admin'),
-('Charlie User', 'hash_charlie', 'user'),
-('Diana User', 'hash_diana', 'user'),
-('Eve User', 'hash_eve', 'user'),
+('alice', '$2a$12$c2FiWJDCBU8WYPz9mgy6X.WNgV6KVH/Ua8MY56qkJKpDfW4fSn58G', 'admin'),
+('bob boss', '$2a$12$RnH71xYxA4gn28RdQ7/nuuTOLiVAlcG4FiYDirGBpItChJfF1U33m', 'admin'),
+('charlie user', 'hash_charlie', 'user'),
+('diana user', 'hash_diana', 'user'),
+('eve user', 'hash_eve', 'user'),
 ('test', '$2a$12$JWnt2tcBelbc5QCZTiV5Qe8FRWPHgK3lt4qCm6IclZjOGPcGEZF0W', 'user');
 
 INSERT INTO contacts (first_name, last_name, email, telephone_number, custom_fields) VALUES

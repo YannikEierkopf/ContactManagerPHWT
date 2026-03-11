@@ -22,6 +22,10 @@ npm install
 4. SQL-Skripte ausführen:
 - `backend/database/create_table_contact.sql`
 - optional: `backend/database/example_data.sql`
+- bei bereits bestehenden Daten: 
+```
+UPDATE users SET username = lower(trim(username));
+```
 
 5. `.env` im Projektroot erstellen:
 
