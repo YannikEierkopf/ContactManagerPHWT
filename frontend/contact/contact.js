@@ -89,3 +89,18 @@ const cancelBtn = document.querySelector('.cancel');
 cancelBtn.addEventListener('click', () => {
     window.location.href = '/dashboard/dashboard.html';
 });
+
+const logoutBtn = document.querySelector('.btn-logout');
+
+logoutBtn.addEventListener('click', async () => {
+    try {
+        await fetch('/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch (error) {
+        console.error('Logout Error:', error);
+    } finally {
+        window.location.href = '/login/login.html';
+    }
+});
