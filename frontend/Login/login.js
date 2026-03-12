@@ -28,6 +28,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             }
             
             window.location.href = '/dashboard/dashboard.html';
+        } else if (response.status === 429) {
+            const data = await response.json();
+            passwordError.textContent = `Zu viele Versuche. Bitte versuchen Sie es in ${data.secondsLeft} Sekunden erneut.`;
         } else {
             passwordError.textContent = 'Ungültige Anmeldedaten!';
         }
