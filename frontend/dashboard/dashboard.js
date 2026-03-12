@@ -129,3 +129,9 @@ async function initDashboard() {
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
+
+const newContactBtn = document.querySelector(".btn-new-contact");
+
+newContactBtn.addEventListener("click", () => {
+    window.location.href = "../contact/new_contact.html";
+});

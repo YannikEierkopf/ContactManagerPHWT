@@ -83,3 +83,9 @@ async function deleteContact() {
         console.error('Error:', error);
     }
 }
+
+const cancelBtn = document.querySelector('.cancel');
+
+cancelBtn.addEventListener('click', () => {
+    window.location.href = '/dashboard/dashboard.html';
+});
