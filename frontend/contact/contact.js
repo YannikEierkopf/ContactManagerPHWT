@@ -2,7 +2,7 @@
 function addField() {
     const container = document.getElementById('customFields');
     const field = document.createElement('div');
-    const i = Date.now();
+    const i = Math.random();
 
     field.id = `${i}`;
     field.style.marginBottom = '10px';
@@ -52,7 +52,7 @@ window.onload = async () => {
 function loadCustomField(labelName, inputValue) {
     const container = document.getElementById('customFields');
     const field = document.createElement('div');
-    const i = Date.now();
+    const i = Math.random();
 
     field.id = `field_${i}`;
     field.style.marginBottom = '10px';
