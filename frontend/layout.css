@@ -39,6 +39,10 @@ header button{
     color: var(--blue-main);
     font-weight: bolder;
 }
+header a{
+	color: white;
+	text-decoration: none;
+}
 
 footer{
 	margin-top: auto;

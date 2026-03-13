@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kontakt</title>
-    <link rel="stylesheet" href="../layout.css">
+    <link rel="stylesheet" href="/layout.css">
+    <link rel="stylesheet" href="/footer/footer.css">
+    <script src="/footer/footer.js" defer></script>
 </head>
 <body>
-        <header>
-        <h1>Kontaktverwaltung</h1>
+    <header>
+        <h1><a href="/dashboard/dashboard.html">Kontaktverwaltung</a></h1>
+        <button type="button" class="btn-dashboard"> Zurück</button>
     </header>
 
 <main>
@@ -17,13 +20,13 @@
 
     <form action="/create/inquire" method="POST">
         <label for="name">Ihr Name:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" maxlength="255" required>
 
         <label for="email">Ihre E-Mail-Adresse:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" maxlength="255" required>
 
         <label for="message">Ihre Nachricht:</label>
-        <textarea id="message" name="message" rows="5" required></textarea>
+        <textarea id="message" name="message" rows="5" maxlength="8191" required></textarea>
 
         <button type="submit">Nachricht senden</button>
     </form>

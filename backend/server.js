@@ -5,6 +5,7 @@ const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Initialize server
@@ -50,6 +51,20 @@ app.use(session({
         httpOnly: true,
     }
 }));
+
+// Rate limiting
+const authLimiter = rateLimit({
+    windowMs: 60 * 1000, // 60 seconds
+    max: 5, // 5 requests per IP
+    skipSuccessfulRequests: true,
+    handler: (req, res) => {
+        const secondsLeft = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000);
+        res.status(429).json({
+            error: 'Zu viele Versuche.',
+            secondsLeft: secondsLeft
+        });
+    }
+});
 
 //Start server
 app.listen(port, () => {
@@ -120,7 +135,7 @@ function requireAdmin(req, res, next) {
 // API routes ---------------------------------------------------------------
 // (TODO TESTEN)
 // admin creates a new user with explicit role
-app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
+app.post('/api/users', authLimiter, requireLogin, requireAdmin, async (req, res) => {
     const { username, password, role } = req.body;
     const normalizedUsername = normalizeUsername(username);
 
@@ -147,7 +162,7 @@ app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
 });
 
 // login: verify credentials and return user id and role if ok
-app.post('/login', async (req, res) => {
+app.post('/login', authLimiter, async (req, res) => {
     const { username, password } = req.body;
     const normalizedUsername = normalizeUsername(username);
     if (!normalizedUsername || !password) {
@@ -258,9 +273,18 @@ app.post('/create/contact', requireLogin, async (req, res) => {
     for (const key in data) {
         if (key.startsWith('label_')) {
             const id = key.split('_')[1];
-            const fieldName = data[key];
+            let fieldName = data[key].trim();
             const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
+            if (!fieldName) continue;
+
+            let finalFieldName = fieldName;
+            let counter = 2;
+
+            while (customFields.hasOwnProperty(finalFieldName)) {
+                finalFieldName = `${fieldName} (${counter})`;
+                counter++;
+            }
+            customFields[finalFieldName] = fieldValue;
 
         }
     }
@@ -325,9 +349,18 @@ app.post('/edit/contact', requireLogin, async (req, res) => {
     for (const key in data) {
         if (key.startsWith('label_')) {
             const id = key.split('_')[1];
-            const fieldName = data[key];
+            let fieldName = data[key].trim();
             const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
+            if (!fieldName) continue;
+
+            let finalFieldName = fieldName;
+            let counter = 2;
+
+            while (customFields.hasOwnProperty(finalFieldName)) {
+                finalFieldName = `${fieldName} (${counter})`;
+                counter++;
+            }
+            customFields[finalFieldName] = fieldValue;
         }
     }
 

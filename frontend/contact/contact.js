@@ -2,7 +2,7 @@
 function addField() {
     const container = document.getElementById('customFields');
     const field = document.createElement('div');
-    const i = Date.now();
+    const i = Math.random();
 
     field.id = `${i}`;
     field.style.marginBottom = '10px';
@@ -52,14 +52,34 @@ window.onload = async () => {
 function loadCustomField(labelName, inputValue) {
     const container = document.getElementById('customFields');
     const field = document.createElement('div');
-    const i = Date.now();
+    const i = Math.random();
 
     field.id = `field_${i}`;
     field.style.marginBottom = '10px';
-    field.innerHTML = `
-                        <input type="text" id="label_${i}" name="label_${i}" value="${labelName}" placeholder="Bezeichnung"><br>
-                        <input type="text" id="input_${i}" name="input_${i}" value="${inputValue}" placeholder="Wert"><br>
-                        <button type="button" onclick="removeField('field_${i}')">Feld löschen</button>`;
+
+    const labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.id = `label_${i}`;
+    labelInput.name = `label_${i}`;
+    labelInput.value = labelName;
+    labelInput.placeholder = 'Bezeichnung';
+
+    const valueInput = document.createElement('input');
+    valueInput.type = 'text';
+    valueInput.id = `input_${i}`;
+    valueInput.name = `input_${i}`;
+    valueInput.value = inputValue;
+    valueInput.placeholder = 'Wert';
+    valueInput.maxLength = 255;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = 'Feld löschen';
+    deleteBtn.onclick = function() { removeField(`field_${i}`); };
+
+    field.appendChild(labelInput);
+    field.appendChild(valueInput);
+    field.appendChild(deleteBtn);
 
     container.appendChild(field);
 }
@@ -83,3 +103,24 @@ async function deleteContact() {
         console.error('Error:', error);
     }
 }
+
+const cancelBtn = document.querySelector('.cancel');
+
+cancelBtn.addEventListener('click', () => {
+    window.location.href = '/dashboard/dashboard.html';
+});
+
+const logoutBtn = document.querySelector('.btn-logout');
+
+logoutBtn.addEventListener('click', async () => {
+    try {
+        await fetch('/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch (error) {
+        console.error('Logout Error:', error);
+    } finally {
+        window.location.href = '/login/login.html';
+    }
+});

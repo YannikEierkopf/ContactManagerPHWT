@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrieren - Kontakt-Verwaltung</title>
+    <link rel="stylesheet" href="/layout.css">
     <link rel="stylesheet" href="/login/login.css">
     <script src="/login/signup/signup.js" defer></script>
 </head>
 <body>
-    <header></header>
+    <header>
+        <h1><a href="/dashboard/dashboard.html">Kontaktverwaltung</a></h1>
+    </header>
+
     <main class="login-container">
-        <h1>Registrieren</h1>
+        <h2>Registrieren</h2>
         <form id="loginForm">
             <section class="form-group">
                 <label for="username">Benutzername</label>
@@ -23,12 +27,12 @@
                 <div class="error-message" id="passwordError"></div>
             </section>
 
-            <button type="submit" class="btn-login" onclick="window.location.href='/login/login.html'">Zurück zum Login</button>
+            <button type="button" class="btn-to-login">Zurück zum Login</button>
             <button type="submit" class="btn-login">Registrieren</button>
         </form>
     </main>
     <footer>
-        <nav>&copy; 2026 Kontakt-Verwaltung. Alle Rechte vorbehalten. <br>
+        <nav>
             <a href="/footer/impressum.html">Impressum</a>
             <a href="/footer/datenschutz.html">Datenschutz</a>
             <a href="/footer/kontakt.html">Kontakt</a>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit contact</title>
-    <link rel="stylesheet" href="../layout.css">
+    <link rel="stylesheet" href="/layout.css">
     <link rel="stylesheet" href="contact.css">
     <script src="contact.js" defer></script>
 </head>
@@ -12,7 +12,7 @@
 
 <header>
     <h1>Kontakt bearbeiten</h1>
-    <button type="button"> Abmelden</button>
+    <button type="button" class="btn-logout"> Abmelden</button>
 </header>
 
 <main>
@@ -25,22 +25,22 @@
 
             <div class="field">
                 <label for="firstName">Vorname</label><br>
-                <input type="text" name="firstName" id="firstName" placeholder="Gebe den Vorname ein" required>
+                <input type="text" name="firstName" id="firstName" placeholder="Gebe den Vorname ein" maxlength="255" required>
             </div>
 
             <div class="field">
                 <label for="lastName">Nachname</label><br>
-                <input type="text" name="lastName" id="lastName" placeholder="Gebe den Nachname ein" required>
+                <input type="text" name="lastName" id="lastName" placeholder="Gebe den Nachname ein" maxlength="255" required>
             </div>
 
             <div class="field">
                 <label for="email">Email</label><br>
-                <input type="email" name="email" id="email" placeholder="Gebe die Email ein">
+                <input type="email" name="email" id="email" placeholder="Gebe die Email ein" maxlength="255">
             </div>
 
             <div class="field">
                 <label for="telephoneNumber">Telefonnummer</label><br>
-                <input type="tel" name="telephoneNumber" id="telephoneNumber" placeholder="Gebe den Telefonnummer ein">
+                <input type="tel" name="telephoneNumber" id="telephoneNumber" placeholder="Gebe den Telefonnummer ein" maxlength="30">
             </div>
         </fieldset>
 
@@ -55,7 +55,7 @@
 
         <button type="submit">Änderung speichern</button>
         <button type="button" id = "delete" onclick="deleteContact()">Kontakt löschen</button>
-
+        <button type="button" class="cancel">Abbrechen</button>
     </form>
 </main>
 

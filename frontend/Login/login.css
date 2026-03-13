@@ -1,5 +1,6 @@
 header{
 	justify-content: center;
+	text-align: center;
 }
 
 main.login-container{
@@ -9,12 +10,19 @@ main.login-container{
 	box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 	width: 100%;
 	max-width: 400px;
-	margin: 60px auto;
+	margin: 10rem auto;
+	border-radius: 15px;
+}
+
+.login-container button{
+	margin-bottom: 0.5rem;
+	font-weight: bolder;
+	font-size: 1rem;
 }
 
 .login-container h2{
 	text-align: center;
-	margin-bottom: 15px;
+	margin-bottom: 1rem;
 }
 
 .remember-me{
@@ -33,6 +41,17 @@ main.login-container{
 	margin: 0;
 }
 
-.btn-login{
+.btn-login,
+.btn-to-login{
 	width: 100%;
+}
+
+.signup-link{
+	text-align: center;
+	margin-top: 0px;
+}
+.signup-link a{
+	color: var(--blue-main);
+	text-decoration: none;
+	font-weight: bold;
 }

@@ -34,3 +34,8 @@ section{
 	text-decoration: none;
 	color: inherit;
 }
+
+.btn-new-contact{
+	padding: 10px 15px;
+	margin-bottom: 15px;
+}

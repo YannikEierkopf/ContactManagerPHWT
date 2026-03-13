@@ -1,4 +1,9 @@
  const form = document.getElementById("loginForm");
+ const back = document.querySelector(".btn-to-login");
+
+  back.addEventListener("click", () => {
+    window.location.href = "/login/login.html";
+ });
 
   form.addEventListener("submit", async function(event) {
     event.preventDefault();
