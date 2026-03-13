@@ -273,9 +273,18 @@ app.post('/create/contact', requireLogin, async (req, res) => {
     for (const key in data) {
         if (key.startsWith('label_')) {
             const id = key.split('_')[1];
-            const fieldName = data[key];
+            let fieldName = data[key].trim();
             const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
+            if (!fieldName) continue;
+
+            let finalFieldName = fieldName;
+            let counter = 2;
+
+            while (customFields.hasOwnProperty(finalFieldName)) {
+                finalFieldName = `${fieldName} (${counter})`;
+                counter++;
+            }
+            customFields[finalFieldName] = fieldValue;
 
         }
     }
@@ -340,9 +349,18 @@ app.post('/edit/contact', requireLogin, async (req, res) => {
     for (const key in data) {
         if (key.startsWith('label_')) {
             const id = key.split('_')[1];
-            const fieldName = data[key];
+            let fieldName = data[key].trim();
             const fieldValue = data[`input_${id}`];
-            customFields[fieldName] = fieldValue;
+            if (!fieldName) continue;
+
+            let finalFieldName = fieldName;
+            let counter = 2;
+
+            while (customFields.hasOwnProperty(finalFieldName)) {
+                finalFieldName = `${fieldName} (${counter})`;
+                counter++;
+            }
+            customFields[finalFieldName] = fieldValue;
         }
     }
 
