@@ -54,7 +54,14 @@ async function loadContacts() {
       const li = document.createElement("li");
       const link = document.createElement("a");
       link.href = `../contact/edit_contact.html?id=${contact.id}`;
-      link.textContent = `${contact.first_name} ${contact.last_name} ${contact.email} ${contact.telephone_number}`;
+      link.textContent = [
+      `${contact.first_name} ${contact.last_name}`,
+      contact.email,
+      contact.telephone_number
+      ]
+      .filter(Boolean)
+      .join("\u00A0\u00A0|\u00A0\u00A0")    //non breaking space
+
       li.appendChild(link);
       contactList.appendChild(li);
     });
