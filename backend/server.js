@@ -10,6 +10,7 @@ require('dotenv').config();
 
 // Initialize server
 const app = express();
+app.set('trust proxy', 1);
 const port = Number(process.env.PORT) || 3000;
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.get('/', (req, res) => {
@@ -58,6 +59,9 @@ const authLimiter = rateLimit({
     windowMs: 60 * 1000, // 60 seconds
     max: 5, // 5 requests per IP
     skipSuccessfulRequests: true,
+    keyGenerator:(req)=> {
+	return String(req.body?.username || '').trim().toLowerCase();
+	},
     handler: (req, res) => {
         const secondsLeft = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000);
         res.status(429).json({
@@ -135,7 +139,7 @@ function requireAdmin(req, res, next) {
 
 // API routes ---------------------------------------------------------------
 // public signup: create a normal user account
-app.post('/api/signup', authLimiter, async (req, res) => {
+app.post('/api/signup', async (req, res) => {
     const { username, password } = req.body;
     const normalizedUsername = normalizeUsername(username);
 
@@ -158,7 +162,7 @@ app.post('/api/signup', authLimiter, async (req, res) => {
 });
 
 // admin creates a new user with explicit role
-app.post('/api/users', authLimiter, requireLogin, requireAdmin, async (req, res) => {
+app.post('/api/users', requireLogin, requireAdmin, async (req, res) => {
     const { username, password, role } = req.body;
     const normalizedUsername = normalizeUsername(username);
 
