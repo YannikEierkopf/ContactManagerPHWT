@@ -10,6 +10,9 @@ const authLimiter = rateLimit({
     windowMs: 60 * 1000, // 60 seconds
     max: 5, // 5 requests per IP
     skipSuccessfulRequests: true,
+    keyGenerator:(req)=> {
+	return String(req.body?.username || '').trim().toLowerCase();
+	},
     handler: (req, res) => {
         const secondsLeft = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000);
         res.status(429).json({
