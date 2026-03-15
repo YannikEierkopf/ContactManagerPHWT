@@ -14,6 +14,7 @@ const routes = require('./routes');
 
 // Initialize server
 const app = express();
+app.set('trust proxy', 1);
 const port = Number(process.env.PORT) || 3000;
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.get('/', (req, res) => {
