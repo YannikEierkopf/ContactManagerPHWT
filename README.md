@@ -31,6 +31,7 @@ UPDATE users SET username = lower(trim(username));
 
 ```env
 PORT=3000
+DB_USER=postgres
 DB_NAME=contact_manager_db
 DB_PASSWORD=DEIN_POSTGRES_PASSWORT
 SESSION_SECRET=DEIN_LANGES_ZUFAELLIGES_SECRET

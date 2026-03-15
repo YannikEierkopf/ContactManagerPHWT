@@ -23,10 +23,11 @@ app.use(express.json()); // allow JSON bodies for API endpoints
 const sessionSecret = process.env.SESSION_SECRET;
 const sessionMaxAge = Number(process.env.SESSION_MAX_AGE_MS) || 5 * 60 * 1000;
 const sessionTableName = process.env.SESSION_TABLE_NAME || 'user_sessions';
+const dbUser = process.env.DB_USER || 'postgres';
 
 // PostgreSQL configuration
 const pool = new Pool({
-    user: 'postgres',
+    user: dbUser,
     host: 'localhost',
     database: process.env.DB_NAME || 'contact_manager_db',
     password: process.env.DB_PASSWORD,
