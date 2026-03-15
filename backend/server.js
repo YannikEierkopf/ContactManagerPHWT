@@ -133,7 +133,29 @@ function requireAdmin(req, res, next) {
 }
 
 // API routes ---------------------------------------------------------------
-// (TODO TESTEN)
+// public signup: create a normal user account
+app.post('/api/signup', authLimiter, async (req, res) => {
+    const { username, password } = req.body;
+    const normalizedUsername = normalizeUsername(username);
+
+    if (!normalizedUsername || !password) {
+        return res.status(400).json({ error: 'Benutzername und Passwort sind erforderlich' });
+    }
+
+    try {
+        const hashed = await hashPassword(password);
+        const insert = `INSERT INTO users (username, password_hash, role) VALUES ($1, $2, 'user')`;
+        await pool.query(insert, [normalizedUsername, hashed]);
+        return res.status(201).json({ message: 'Benutzer erstellt' });
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(409).json({ error: 'Benutzername existiert bereits' });
+        }
+        console.error(err);
+        return res.status(500).json({ error: 'Fehler beim Erstellen des Benutzers' });
+    }
+});
+
 // admin creates a new user with explicit role
 app.post('/api/users', authLimiter, requireLogin, requireAdmin, async (req, res) => {
     const { username, password, role } = req.body;

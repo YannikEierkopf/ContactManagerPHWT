@@ -1,43 +1,42 @@
- const form = document.getElementById("loginForm");
- const back = document.querySelector(".btn-to-login");
+const form = document.getElementById("loginForm");
+const back = document.querySelector(".btn-to-login");
+const passwordError = document.getElementById("passwordError");
 
-  back.addEventListener("click", () => {
+back.addEventListener("click", () => {
     window.location.href = "/login/login.html";
- });
+});
 
-  form.addEventListener("submit", async function(event) {
+form.addEventListener("submit", async function(event) {
     event.preventDefault();
+    passwordError.textContent = "";
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
-    const role = 'user';
 
     try {
-      const response = await fetch("http://localhost:3000/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-          role: role
-        })
-      });
+        const response = await fetch("/api/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
 
-      const data = await response.json();
-      console.log(response.status);
-      console.log(data);
+        const data = await response.json();
 
-      if (!response.ok) {
-        alert(data.error || "Benutzer konnte nicht erstellt werden.");
-        return;
-      }
+        if (!response.ok) {
+            passwordError.textContent = data.error || "Benutzer konnte nicht erstellt werden.";
+            return;
+        }
 
-      alert("Benutzer wurde erstellt.");
-      form.reset();
+        alert("Benutzer wurde erstellt. Du kannst dich jetzt anmelden.");
+        form.reset();
+        window.location.href = "/login/login.html";
     } catch (error) {
-      console.error("Fehler:", error);
-      alert("Server nicht erreichbar.");
+        console.error("Fehler:", error);
+        passwordError.textContent = "Server nicht erreichbar.";
     }
-  });
+});
