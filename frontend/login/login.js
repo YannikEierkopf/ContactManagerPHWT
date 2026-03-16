@@ -1,5 +1,10 @@
 const passwordError = document.getElementById('passwordError');
 
+if (localStorage.getItem('username')) {
+    document.getElementById('username').value = localStorage.getItem('username');
+    document.getElementById('remember').checked = true;
+}
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
