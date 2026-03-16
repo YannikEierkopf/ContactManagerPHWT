@@ -31,7 +31,7 @@ window.onload = async () => {
     document.getElementById('contactId').value = contactId;
 
     try {
-        const response = await fetch(`/api/contacts/${contactId}`);
+        const response = await fetch(`/contacts/${contactId}`);
         const contact = await response.json();
 
         document.getElementById('firstName').value = contact.first_name || '';

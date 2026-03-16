@@ -3,7 +3,7 @@ const helper = require('../helper_routines');
 const bcrypt = require('bcrypt');
 
 // public signup: create a normal user account
-router.post('/api/signup', router.authLimiter, async (req, res) => {
+router.post('/signup', router.authLimiter, async (req, res) => {
     const { username, password } = req.body;
     const normalizedUsername = helper.normalizeUsername(username);
 

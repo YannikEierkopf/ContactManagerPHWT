@@ -147,7 +147,7 @@ router.post('/edit/contact', helper.requireLogin, async (req, res) => {
 });
 
 //GET data for edit
-router.get('/api/contacts/:id', helper.requireLogin, async (req, res) => {
+router.get('/contacts/:id', helper.requireLogin, async (req, res) => {
     const contactId = parseInt(req.params.id, 10);
     if (!contactId) {
         return res.status(400).send('Ungueltige Kontakt-ID');
