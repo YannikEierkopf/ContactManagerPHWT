@@ -74,12 +74,19 @@ Datenbank in der postgreSQL-Shell anlegen.
 CREATE DATABASE contact_manager_db;
 ```
 
-2. Datenbank-Schema erstellen:
+2. Datenbank-Schema erstellen und Beispieldaten anlegen:
 
 Schema anhand des SQL-Skriptes `create_database_schema.sql` in der postgreSQL-Shell anlegen.
 
 ```bash
-\i "backend/database/create_database_schema.sql";
+\c DB_NAME;
+\i dein/pfad/zum/projekt/ContactManagerPHWT/backend/database/create_database_schema.sql;
+```
+
+...und Beispieldaten einfügen
+```bash
+\c DB_NAME;
+\i dein/pfad/zum/projekt/ContactManagerPHWT/backend/database/example_data.sql;
 ```
 
 ### 3) `.env` anlegen
