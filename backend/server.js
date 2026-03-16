@@ -27,12 +27,11 @@ app.use(express.json()); // allow JSON bodies for API endpoints
 
 const sessionSecret = process.env.SESSION_SECRET;
 const sessionMaxAge = Number(process.env.SESSION_MAX_AGE_MS) || 5 * 60 * 1000;
-const sessionTableName = process.env.SESSION_TABLE_NAME || 'user_sessions';
 
 app.use(session({
     store: new pgSession({
         pool: helper.pool,
-        tableName: sessionTableName,
+        tableName: 'user_sessions',
         createTableIfMissing: true
     }),
     secret: sessionSecret,
